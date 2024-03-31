@@ -47,4 +47,4 @@ shape = SubResource("ConvexPolygonShape3D_wpko7")
 [node name="head" type="Node3D" parent="player_fp"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
 
-[node name="Camera3D" type="Camera3D" parent="player_fp/head"]
+[node name="player_camera" type="Camera3D" parent="player_fp/head"]
