@@ -1,6 +1,6 @@
 extends CharacterBody3D
 
-#mouse navigation variables.
+#camera navigation variables.
 var mouse_sensitivity : float = 0.015
 
 #speed variables.
@@ -63,6 +63,9 @@ func _physics_process(delta):
 	#movement inputs.
 	var input_dir = Input.get_vector("left", "right", "forward", "backward")
 
+	#camera rotaion variables.
+	var primary_cam_rotation = deg_to_rad(head.rotation.z * 5.0)
+
 	#state machine as follows.
 	#crouching.
 	if Input.is_action_pressed("crouch"):
@@ -104,9 +107,16 @@ func _physics_process(delta):
 			sprinting = false
 			crouching = false
 
+	#while sliding.
+	if is_on_floor():
+		if sliding:
+			player_camera.rotation.z = lerp(player_camera.rotation.z, deg_to_rad(7.0), 0.3)
+		else:
+			player_camera.rotation.z = lerp(player_camera.rotation.z, primary_cam_rotation, 0.1)
+
 	#sliding end.
 	if sliding:
-		slide_timer -= delta
+		slide_timer -= delta 
 		if slide_timer <= 0:
 			sliding = false
 
