@@ -1,10 +1,15 @@
 extends CharacterBody3D
 
-
+#navigation variables
 var speed : float = 5.0
 var jump_velocity : float = 4.5
 var gravity : float = 9.8
 var mouse_sensitivity : float = 0.015
+
+#bob variables
+var bob_frequency : float = 1.5
+var bob_amplitude : float = 0.05
+var bob_def : float = 0.0
 
 @onready var head : Node3D = $head
 @onready var player_camera : Camera3D = $head/player_camera
@@ -45,4 +50,14 @@ func _physics_process(delta):
 		velocity.x = 0.0
 		velocity.z = 0.0
 
+	#player head bob
+	bob_def += delta * velocity.length() * float(is_on_floor())
+	player_camera.transform.origin = _player_head_bob(bob_def)
+
 	move_and_slide()
+
+func _player_head_bob(bob_time) -> Vector3:
+	var pos = Vector3.ZERO
+	pos.y = sin(bob_time * bob_frequency) * bob_amplitude
+	pos.x = cos(bob_time * bob_frequency) * bob_amplitude
+	return pos
