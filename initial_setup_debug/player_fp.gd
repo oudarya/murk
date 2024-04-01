@@ -11,6 +11,11 @@ var bob_frequency : float = 2.0
 var bob_amplitude : float = 0.08
 var bob_def : float = 0.0
 
+#fov variables
+var base_fov : float = 75.0
+var change_in_fov : float = 1.5
+
+#extended nodes as variables
 @onready var head : Node3D = $head
 @onready var player_camera : Camera3D = $head/player_camera
 
@@ -62,6 +67,11 @@ func _physics_process(delta):
 	#player head bob
 	bob_def += delta * velocity.length() * float(is_on_floor())
 	player_camera.transform.origin = _player_head_bob(bob_def)
+
+	#fov change with player motion
+	var velocity_clamped = clamp(velocity.length(), 0.5, 15.0)
+	var target_fov = base_fov + change_in_fov * velocity_clamped
+	player_camera.fov = lerp(player_camera.fov, target_fov, delta * 8.0)
 
 	move_and_slide()
 
