@@ -32,7 +32,7 @@ func _unhandled_input(event):
 
 func _physics_process(delta):
 
-	#FPS Counter 
+	#debug FPS Counter 
 	var fps_counter : float = Engine.get_frames_per_second()
 	print(str(fps_counter))
 
@@ -65,13 +65,13 @@ func _physics_process(delta):
 		velocity.z = lerp(velocity.z, direction.z, delta * 2.0)
 
 	#player head bob
-	bob_def += delta * velocity.length() * float(is_on_floor())
+	bob_def += delta * velocity.length() * float(is_on_floor()) 
 	player_camera.transform.origin = _player_head_bob(bob_def)
 
 	#fov change with player motion
 	var velocity_clamped = clamp(velocity.length(), 0.5, 15.0)
 	var target_fov = base_fov + change_in_fov * velocity_clamped
-	player_camera.fov = lerp(player_camera.fov, target_fov, delta * 8.0)
+	player_camera.fov = lerp(player_camera.fov, target_fov, delta * 5.0)
 
 	move_and_slide()
 

@@ -44,7 +44,7 @@ points = PackedVector3Array(-0.125207, -0.532801, -0.480507, 0.0227831, 0.47607,
 [node name="debug_initial_level" type="Node3D"]
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
-transform = Transform3D(-0.503406, -0.774086, -0.383893, -0.581229, -0.0253769, 0.813345, -0.63934, 0.632572, -0.437146, 0, 12.8934, 0)
+transform = Transform3D(0.719048, -0.195669, 0.666846, -0.663749, -0.477692, 0.575541, 0.205931, -0.85646, -0.473358, 0, 12.8934, 0)
 shadow_enabled = true
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
