@@ -15,6 +15,8 @@ var bob_def : float = 0.0
 var base_fov : float = 75.0
 var change_in_fov : float = 1.5
 
+var is_zoomed : bool = false
+
 #extended nodes as variables
 @onready var head : Node3D = $head
 @onready var player_camera : Camera3D = $head/player_camera
@@ -68,10 +70,18 @@ func _physics_process(delta):
 	bob_def += delta * velocity.length() * float(is_on_floor()) 
 	player_camera.transform.origin = _player_head_bob(bob_def)
 
+	#sight zoom, controlled
+	var zoomed_fov : float = 100.00
+	var zoom_fov_step : float = 50.00
+	if Input.is_action_pressed("sight_zoom"):
+		zoomed_fov = zoomed_fov - zoom_fov_step
+	player_camera.set_fov(lerp(player_camera.fov, zoomed_fov, delta * 8.0))
+
 	#fov change with player motion
 	var velocity_clamped = clamp(velocity.length(), 0.5, 15.0)
 	var target_fov = base_fov + change_in_fov * velocity_clamped
-	player_camera.fov = lerp(player_camera.fov, target_fov, delta * 5.0)
+	if is_zoomed == false:
+		player_camera.fov = lerp(player_camera.fov, target_fov, delta * 5.0)
 
 	move_and_slide()
 
