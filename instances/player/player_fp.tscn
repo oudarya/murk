@@ -1,0 +1,35 @@
+[gd_scene load_steps=5 format=3 uid="uid://b06rgsbbsvx5x"]
+
+[ext_resource type="Script" path="res://instances/player/player_fp.gd" id="1_rqpjl"]
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_msv3f"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_55byw"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_6rm6m"]
+height = 1.4
+
+[node name="player_fp" type="CharacterBody3D"]
+script = ExtResource("1_rqpjl")
+
+[node name="player_mesh" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+visible = false
+mesh = SubResource("CapsuleMesh_msv3f")
+
+[node name="standing_collision" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+shape = SubResource("CapsuleShape3D_55byw")
+
+[node name="crouching_collision" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.7, 0)
+shape = SubResource("CapsuleShape3D_6rm6m")
+disabled = true
+
+[node name="raycast_stand_checker" type="RayCast3D" parent="."]
+target_position = Vector3(0, 2, 0)
+
+[node name="head" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.8, 0)
+
+[node name="player_camera" type="Camera3D" parent="head"]

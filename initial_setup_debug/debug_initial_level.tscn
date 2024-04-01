@@ -1,6 +1,6 @@
 [gd_scene load_steps=12 format=3 uid="uid://8adijtsyk584"]
 
-[ext_resource type="PackedScene" uid="uid://b06rgsbbsvx5x" path="res://instances/player_fp.tscn" id="1_nn6ld"]
+[ext_resource type="PackedScene" uid="uid://b06rgsbbsvx5x" path="res://instances/player/player_fp.tscn" id="1_nn6ld"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_jkek5"]
 sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
@@ -34,7 +34,7 @@ albedo_color = Color(0.564706, 0.388235, 0.223529, 1)
 albedo_color = Color(0.0784314, 0.188235, 0.905882, 1)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_rb6ws"]
-albedo_color = Color(0.94902, 0.533333, 0.0901961, 1)
+albedo_color = Color(0.517647, 0.6, 0.403922, 1)
 
 [node name="debug_initial_level" type="Node3D"]
 
@@ -104,6 +104,11 @@ material = SubResource("StandardMaterial3D_gwx5j")
 
 [node name="box_05" type="CSGBox3D" parent="environment/boxes"]
 transform = Transform3D(3, 0, 0, 0, 1.07291, 0, 0, 0, 3, -15, 0.538861, -13.1487)
+use_collision = true
+material = SubResource("StandardMaterial3D_rb6ws")
+
+[node name="box_06" type="CSGBox3D" parent="environment/boxes"]
+transform = Transform3D(3, 0, 0, 0, 1.07291, 0, 0, 0, 3, -2.6056, 1.98447, -5.42205)
 use_collision = true
 material = SubResource("StandardMaterial3D_rb6ws")
 
