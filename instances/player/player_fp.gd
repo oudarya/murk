@@ -27,6 +27,12 @@ var base_fov : float = 75.0
 var change_in_fov : float = 1.5
 var is_zoomed : bool = false
 
+#sliding variables.
+var slide_timer : float = 0.0
+var slide_timer_max : float = 1.0
+var slide_speed : float = 8.0
+var slide_vector : Vector2 = Vector2.ZERO
+
 #player states.
 var walking : bool = false
 var sprinting : bool = false
@@ -54,13 +60,23 @@ func _unhandled_input(event):
 
 func _physics_process(delta):
 
+	#movement inputs.
+	var input_dir = Input.get_vector("left", "right", "forward", "backward")
+
 	#state machine as follows.
 	#crouching.
 	if Input.is_action_pressed("crouch"):
 		current_speed = crouch_speed
 		head.position.y = lerp(head.position.y, crouch_head_pos, delta * 7.5)
+
 		standing_collision.disabled = true
 		crouching_collision.disabled = false
+
+		#sliding begin.
+		if sprinting and input_dir != Vector2.ZERO:
+			sliding = true
+			slide_vector = input_dir
+			slide_timer = slide_timer_max
 
 		walking = false
 		sprinting = false
@@ -88,9 +104,11 @@ func _physics_process(delta):
 			sprinting = false
 			crouching = false
 
-	#debug FPS count to print.
-	var fps_counter : float = Engine.get_frames_per_second()
-	print(str(fps_counter))
+	#sliding end.
+	if sliding:
+		slide_timer -= delta
+		if slide_timer <= 0:
+			sliding = false
 
 	# Add the gravity.
 	if not is_on_floor():
@@ -99,20 +117,6 @@ func _physics_process(delta):
 	# Handle jump.
 	if Input.is_action_just_pressed("jump") and is_on_floor():
 		velocity.y = jump_velocity
-
-	# Get the input direction and handle the movement/deceleration.
-	var input_dir = Input.get_vector("left", "right", "forward", "backward")
-	var direction = (head.transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
-	if is_on_floor():	
-		if direction:
-			velocity.x = direction.x * current_speed
-			velocity.z = direction.z * current_speed
-		else:
-			velocity.x = lerp(velocity.x, direction.x, delta * 4.0)
-			velocity.z = lerp(velocity.z, direction.z, delta * 4.0)
-	else:
-		velocity.x = lerp(velocity.x, direction.x, delta * 2.0)
-		velocity.z = lerp(velocity.z, direction.z, delta * 2.0)
 
 	#player head bob values.
 	bob_def += delta * velocity.length() * float(is_on_floor()) 
@@ -130,6 +134,30 @@ func _physics_process(delta):
 	var target_fov = base_fov + change_in_fov * velocity_clamped
 	if is_zoomed == false:
 		player_camera.fov = lerp(player_camera.fov, target_fov, delta * 5.0)
+
+	# Get the input direction and handle the movement/deceleration.
+	var direction = (head.transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
+
+	#direction lock while sliding.
+	if sliding:
+		direction = (head.transform.basis * Vector3(slide_vector.x, 0, slide_vector.y)).normalized()
+
+	if is_on_floor():	
+		if direction:
+			velocity.x = direction.x * current_speed
+			velocity.z = direction.z * current_speed
+			
+			#velocity while sliding.
+			if sliding:
+				velocity.x = direction.x * slide_timer * slide_speed
+				velocity.z = direction.z * slide_timer * slide_speed
+
+		else:
+			velocity.x = lerp(velocity.x, direction.x, delta * 4.0)
+			velocity.z = lerp(velocity.z, direction.z, delta * 4.0)
+	else:
+		velocity.x = lerp(velocity.x, direction.x, delta * 2.0)
+		velocity.z = lerp(velocity.z, direction.z, delta * 2.0)
 
 	move_and_slide()
 
