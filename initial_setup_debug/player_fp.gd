@@ -1,14 +1,14 @@
 extends CharacterBody3D
 
 #navigation variables
-var speed : float = 5.0
+var speed : float = 3.0
 var jump_velocity : float = 4.5
 var gravity : float = 9.8
 var mouse_sensitivity : float = 0.015
 
 #bob variables
-var bob_frequency : float = 1.5
-var bob_amplitude : float = 0.05
+var bob_frequency : float = 2.0
+var bob_amplitude : float = 0.08
 var bob_def : float = 0.0
 
 @onready var head : Node3D = $head
@@ -38,6 +38,12 @@ func _physics_process(delta):
 	# Handle jump.
 	if Input.is_action_just_pressed("jump") and is_on_floor():
 		velocity.y = jump_velocity
+
+	#sprint or walk
+	if Input.is_action_pressed("sprint"):
+		speed = 10.0
+	else:
+		speed = 3.0
 
 	# Get the input direction and handle the movement/deceleration.
 	# As good practice, you should replace UI actions with custom gameplay actions.
