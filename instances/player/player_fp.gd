@@ -25,8 +25,13 @@ var bob_def : float = 0.0
 #fov variables.
 var base_fov : float = 75.0
 var change_in_fov : float = 1.5
-
 var is_zoomed : bool = false
+
+#player states.
+var walking : bool = false
+var sprinting : bool = false
+var crouching : bool = false
+var sliding : bool = false
 
 #extended nodes as variables.
 @onready var head : Node3D = $head
@@ -49,6 +54,40 @@ func _unhandled_input(event):
 
 func _physics_process(delta):
 
+	#state machine as follows.
+	#crouching.
+	if Input.is_action_pressed("crouch"):
+		current_speed = crouch_speed
+		head.position.y = lerp(head.position.y, crouch_head_pos, delta * 7.5)
+		standing_collision.disabled = true
+		crouching_collision.disabled = false
+
+		walking = false
+		sprinting = false
+		crouching = true
+
+	#standing
+	elif !raycast_stand_checker.is_colliding():
+		head.position.y = lerp(head.position.y, primary_head_pos, delta * 7.5)
+		standing_collision.disabled = false
+		crouching_collision.disabled = true
+
+		#sprinting
+		if Input.is_action_pressed("sprint"):
+			current_speed = sprint_speed
+
+			walking = false
+			sprinting = true
+			crouching = false
+
+		#walking
+		else:
+			current_speed = walking_speed
+
+			walking = true
+			sprinting = false
+			crouching = false
+
 	#debug FPS count to print.
 	var fps_counter : float = Engine.get_frames_per_second()
 	print(str(fps_counter))
@@ -60,24 +99,6 @@ func _physics_process(delta):
 	# Handle jump.
 	if Input.is_action_just_pressed("jump") and is_on_floor():
 		velocity.y = jump_velocity
-
-	#crouch, sprint or walk; with changes in terms of speed, collision and standablity check.
-	if Input.is_action_pressed("crouch"):
-		current_speed = crouch_speed
-		head.position.y = lerp(head.position.y, crouch_head_pos, 0.5)
-		standing_collision.disabled = true
-		crouching_collision.disabled = false
-
-	elif !raycast_stand_checker.is_colliding():
-		head.position.y = lerp(head.position.y, primary_head_pos, 0.5)
-		standing_collision.disabled = false
-		crouching_collision.disabled = true
-
-		if Input.is_action_pressed("sprint"):
-			current_speed = sprint_speed
-		else:
-			current_speed = walking_speed
-
 
 	# Get the input direction and handle the movement/deceleration.
 	var input_dir = Input.get_vector("left", "right", "forward", "backward")
