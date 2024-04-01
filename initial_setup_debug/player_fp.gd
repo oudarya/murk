@@ -10,15 +10,22 @@ var mouse_sensitivity : float = 0.015
 @onready var player_camera : Camera3D = $head/player_camera
 
 func _ready():
+	#Mouse captured at the centre of the screen.
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 
 func _unhandled_input(event):
+	#Player intertial navigation, head movement, looking around.
 	if event is InputEventMouseMotion:
 		head.rotate_y(-event.relative.x * mouse_sensitivity)
 		player_camera.rotate_x(-event.relative.y * mouse_sensitivity)
-		player_camera.rotation.x = clamp(player_camera.rotation.x, deg_to_rad(-40), deg_to_rad(60))
+		player_camera.rotation.x = clamp(player_camera.rotation.x, deg_to_rad(-45), deg_to_rad(70))
 
 func _physics_process(delta):
+
+	#FPS Counter 
+	var fps_counter : float = Engine.get_frames_per_second()
+	print(str(fps_counter))
+
 	# Add the gravity.
 	if not is_on_floor():
 		velocity.y -= gravity * delta
